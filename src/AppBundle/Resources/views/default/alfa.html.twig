@@ -1,0 +1,23 @@
+{% extends 'AppBundle::base.html.twig' %}
+
+{% block body %}
+<div class="container">
+    <h1 class="text-center">Bitcoin Price</h1>
+
+    <div class="row">
+
+        {% for itemName, currency in data.bpi %}
+        <div class="col-sm-4 text-center">
+            <h3>{{ currency.code }} - {{ currency.description }}</h3>
+            <button class="btn btn-default">{{ currency.rate_float|round(2, 'floor') }} {{ currency.symbol|raw }}</button>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+    <link href="{{ asset('bundles/app/vendor/bootstrap/css/bootstrap.css')}}" rel="stylesheet" type="text/css">
+    <link href="{{ asset('bundles/app/css/main.css')}}" rel="stylesheet" type="text/css">
+{% endblock %}
