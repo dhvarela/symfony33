@@ -2,40 +2,53 @@
 
 namespace AppBundle\Util;
 
+use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+
 class Apicall
 {
-    const BITCOIN_API_PRICE = "https://api.coindesk.com/v1/bpi/currentprice.json";
-
-    function CallAPI($method, $url, $data = false)
+    function callAPI($method, $url, $data = false)
     {
-        $curl = curl_init();
+        try {
+            $curl = curl_init();
 
-        switch ($method) {
-            case "POST":
-                curl_setopt($curl, CURLOPT_POST, 1);
+            switch ($method) {
+                case "POST":
+                    curl_setopt($curl, CURLOPT_POST, 1);
 
-                if ($data)
-                    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-                break;
-            case "PUT":
-                curl_setopt($curl, CURLOPT_PUT, 1);
-                break;
-            default:
-                if ($data)
-                    $url = sprintf("%s?%s", $url, http_build_query($data));
+                    if ($data)
+                        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+                    break;
+                case "PUT":
+                    curl_setopt($curl, CURLOPT_PUT, 1);
+                    break;
+                default:
+                    if ($data)
+                        $url = sprintf("%s?%s", $url, http_build_query($data));
+            }
+
+            // Optional Authentication:
+            curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+            curl_setopt($curl, CURLOPT_USERPWD, "username:password");
+
+            curl_setopt($curl, CURLOPT_URL, $url);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+            $response = curl_exec($curl);
+
+            curl_close($curl);
+
+            return $response;
+
+        } catch (Exception $e) {
+
+            $response = new JsonResponse();
+            $response->setStatusCode(Response::HTTP_NOT_FOUND);
+            $response->setData(['error' => $e->getMessage()]);
+
+            return $response;
         }
 
-        // Optional Authentication:
-        curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-        curl_setopt($curl, CURLOPT_USERPWD, "username:password");
-
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-
-        $result = curl_exec($curl);
-
-        curl_close($curl);
-
-        return $result;
     }
 }
