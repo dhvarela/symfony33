@@ -21,7 +21,7 @@ class DefaultControllerTest extends WebTestCase
 
         // go to bitcoin text price
         $link = $crawler
-            ->filter('#left-menu a:contains("Bitcoin")') // find all links with the text "Greet"
+            ->filter('#left-menu a:contains("Bitcoin")') // find all links with the text "Bitcoin"
             //->eq(1) // select the second link in the list
             ->link()
         ;

@@ -23,9 +23,8 @@ class ApicallTest extends KernelTestCase
         $api = new Apicall();
         $response = $api->callAPI('GET',$this->container->getParameter('bitcoin_api_price_url'));
 
-
         $this->assertContains('"bpi"', $response);
 
-        // TODO - more test checking api response
+        // TODO - more test checking for api response
     }
 }
