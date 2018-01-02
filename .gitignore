@@ -9,3 +9,6 @@
 /web/bundles/
 /.idea/
 var/sessions/
+
+###> symfony/web-server-bundle ###
+.web-server-pid
