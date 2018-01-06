@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Currency;
 use AppBundle\Util\Apicall;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -55,5 +56,48 @@ class DefaultController extends Controller
         $JSONresponse = new JsonResponse($apiResponse);
 
         return $JSONresponse;
+    }
+
+    /**
+     * @Route("/my-wallet/list", name="my_wallet")
+     */
+    public function myWalletAction(Request $request)
+    {
+        $apiurl = $this->getParameter('api_coinmarketcap');
+
+        $apiCall = new Apicall();
+        $apiResponse = $apiCall->CallAPI('GET',$apiurl);
+
+        $data = json_decode($apiResponse,true);
+
+        $em = $this->getDoctrine()->getManager();
+
+        $currencies = $em->getRepository('AppBundle:Currency')->findAll();
+
+        foreach($currencies as $c) {
+            if (!$c instanceof Currency) {
+                continue;
+            }
+
+            $slug = $c->getSlug();
+
+            foreach($data as $item) {
+                if ($item['id'] == $slug) {
+                    $c->setPriceBtc($item['price_btc']);
+                    $c->setPriceUsd($item['price_usd']);
+                    $em->persist($c);
+                    break;
+                }
+            }
+        }
+
+        $em->flush();
+
+        $currencies = $em->getRepository('AppBundle:Currency')->findAll();
+
+        return $this->render('AppBundle:default:my_wallet.html.twig', [
+            'data'          => $data,
+            'currencies'    => $currencies
+        ]);
     }
 }

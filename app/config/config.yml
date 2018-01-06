@@ -73,3 +73,34 @@ assetic:
     use_controller: '%kernel.debug%'
     filters:
         cssrewrite: ~
+
+easy_admin:
+    site_name: 'My wallet'
+    design:
+        brand_color: '#34495e'
+        color_scheme: 'dark'
+        assets:
+            css:
+                # HTTP protocol-relative URL
+                - 'bundles/freelance/css/admin.css'
+            js:
+                - 'bundles/freelance/js/admin.js'
+            favicon: 'bundles/freelance/image/favicon.png'
+        menu:
+            - { entity: 'Currency', icon: 'bitcoin', params: { sortField: 'name', sortDirection: 'ASC' } }
+    entities:
+        Currency:
+            class: AppBundle\Entity\Currency
+            label: 'Currencies'
+            list:
+                title: "Currency list"
+                fields:
+                  - 'id'
+                  - 'name'
+                  - 'priceUsd'
+                  - { property: 'priceBtc', type: 'string'}
+                  - 'units'
+                actions:
+                    - { name: 'show', icon: 'search', label:'' }
+                    - { name: 'edit', icon: 'pencil', label:'' }
+                    - { name: 'delete', icon: 'remove', label:'' }

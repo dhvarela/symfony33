@@ -1,0 +1,28 @@
+{% extends 'AppBundle::base.html.twig' %}
+
+{% block body %}
+<div class="container">
+    <h1 class="text-center">Bitcoin Price</h1>
+
+
+    {% for currency in currencies %}
+        <div class="row">
+            <div class="col-sm-4 text-center">
+                {{ currency.name }} - {{ currency.id }}
+            </div>
+            <div class="col-sm-4 text-center">
+                {{ currency.priceUsd|round(2, 'floor') }} USD
+            </div>
+            <div class="col-sm-4 text-center">
+                {{ currency.priceBtc|round(8, 'floor') }} BTC
+            </div>
+        </div>
+    {% endfor %}
+
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+    <link href="{{ asset('bundles/app/vendor/bootstrap/css/bootstrap.css')}}" rel="stylesheet" type="text/css">
+    <link href="{{ asset('bundles/app/css/main.css')}}" rel="stylesheet" type="text/css">
+{% endblock %}
