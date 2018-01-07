@@ -200,9 +200,9 @@ class Currency
      *
      * @return Currency
      */
-    public function setRank($units)
+    public function setRank($rank)
     {
-        $this->units = $units;
+        $this->rank = $rank;
 
         return $this;
     }

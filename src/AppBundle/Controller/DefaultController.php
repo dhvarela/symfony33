@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Currency;
 use AppBundle\Util\Apicall;
+use AppBundle\ValueObject\Currencies;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -63,7 +64,7 @@ class DefaultController extends Controller
      */
     public function myWalletAction(Request $request)
     {
-        $apiurl = $this->getParameter('api_coinmarketcap');
+        $apiurl = $this->getParameter('api_coinmarketcap')."?limit=250";
 
         $apiCall = new Apicall();
         $apiResponse = $apiCall->CallAPI('GET',$apiurl);
@@ -82,9 +83,10 @@ class DefaultController extends Controller
             $slug = $c->getSlug();
 
             foreach($data as $item) {
-                if ($item['id'] == $slug) {
+                if ($item['symbol'] == $slug) {
                     $c->setPriceBtc($item['price_btc']);
                     $c->setPriceUsd($item['price_usd']);
+                    $c->setRank($item['rank']);
                     $em->persist($c);
                     break;
                 }
@@ -93,11 +95,41 @@ class DefaultController extends Controller
 
         $em->flush();
 
-        $currencies = $em->getRepository('AppBundle:Currency')->findAll();
+        $currencies = $em->getRepository('AppBundle:Currency')->findBy([],['rank' => 'ASC']);
+
+        $totalBTC = 0;
+        $totalUSD = 0;
+        $currenciesObjects = array();
+
+        foreach($currencies as $c) {
+            if (!$c instanceof Currency) {
+                continue;
+            }
+            $cur = new Currencies();
+            $cur->setRank($c->getRank());
+            $cur->setName($c->getName());
+            $cur->setPriceUsd($c->getPriceUsd());
+            $cur->setPriceBtc($c->getPriceBtc());
+            $cur->setUnits($c->getUnits());
+            $cur->setTotalPriceBtc($c->getPriceBtc()*$c->getUnits());
+            $cur->setTotalPriceUsd($c->getPriceUsd()*$c->getUnits());
+            $currenciesObjects[] = $cur;
+
+            $totalBTC = $totalBTC + $cur->getTotalPriceBtc();
+            $totalUSD = $totalUSD + $cur->getTotalPriceUsd();
+        }
+
+        foreach ($currenciesObjects as $co) {
+            if ($co instanceof Currencies) {
+                $co->setPercent($co->getTotalPriceUsd() / $totalUSD * 100);
+            }
+        }
 
         return $this->render('AppBundle:default:my_wallet.html.twig', [
             'data'          => $data,
-            'currencies'    => $currencies
+            'currencies'    => $currenciesObjects,
+            'totalBTC'      => $totalBTC,
+            'totalUSD'      => $totalUSD,
         ]);
     }
 }

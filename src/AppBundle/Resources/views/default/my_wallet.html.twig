@@ -1,23 +1,49 @@
 {% extends 'AppBundle::base.html.twig' %}
 
+{% block title %}{{ totalUSD|number_format(0, '.', ',') }} USD !!{% endblock %}
+
 {% block body %}
 <div class="container">
-    <h1 class="text-center">Bitcoin Price</h1>
+    <h1 class="text-center">My Wallet</h1>
 
-
-    {% for currency in currencies %}
-        <div class="row">
-            <div class="col-sm-4 text-center">
-                {{ currency.name }} - {{ currency.id }}
-            </div>
-            <div class="col-sm-4 text-center">
-                {{ currency.priceUsd|round(2, 'floor') }} USD
-            </div>
-            <div class="col-sm-4 text-center">
-                {{ currency.priceBtc|round(8, 'floor') }} BTC
-            </div>
-        </div>
-    {% endfor %}
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Price USD</th>
+            <th scope="col">Price BTC</th>
+            <th scope="col">Units</th>
+            <th scope="col">Total USD</th>
+            <th scope="col">Total BTC</th>
+            <th scope="col">%</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for currency in currencies %}
+        <tr>
+            <th scope="row">{{ currency.rank }}</th>
+            <td>{{ currency.name }}</td>
+            <td>{{ currency.priceUsd|round(2, 'floor') }}</td>
+            <td>{{ currency.priceBtc|round(8, 'floor') }}</td>
+            <td><strong>{{ currency.units }}</strong></td>
+            <td>{{ currency.totalPriceUsd }}</td>
+            <td>{{ currency.totalPriceBtc }}</td>
+            <td>{{ currency.percent|round(2, 'floor') }}%</td>
+        </tr>
+        {% endfor %}
+        <tr class="success">
+            <th scope="row">Total</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>{{ totalUSD|round(2, 'floor') }} USD</td>
+            <td>{{ totalBTC|round(8, 'floor') }} BTC</td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
 
 </div>
 {% endblock %}
