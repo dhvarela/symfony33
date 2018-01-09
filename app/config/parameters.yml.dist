@@ -20,3 +20,4 @@ parameters:
 
     # app
     bitcoin_api_price_url: https://api.coindesk.com/v1/bpi/currentprice.json
+    api_coinmarketcap: https://api.coinmarketcap.com/v1/ticker/

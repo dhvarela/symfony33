@@ -27,8 +27,8 @@
             <td>{{ currency.priceUsd|round(2, 'floor') }}</td>
             <td>{{ currency.priceBtc|round(8, 'floor') }}</td>
             <td><strong>{{ currency.units }}</strong></td>
-            <td>{{ currency.totalPriceUsd }}</td>
-            <td>{{ currency.totalPriceBtc }}</td>
+            <td>{{ currency.totalPriceUsd|round(2, 'floor') }}</td>
+            <td>{{ currency.totalPriceBtc|round(8, 'floor') }}</td>
             <td>{{ currency.percent|round(2, 'floor') }}%</td>
         </tr>
         {% endfor %}
