@@ -35,4 +35,23 @@ class DefaultControllerTest extends WebTestCase
         $this->assertEquals(3,$crawler->filter('.bitcoin-table h3')->count());
 
     }
+
+    /** @dataProvider provideUrls */
+    public function testPageIsSuccessful($url)
+    {
+        $client = self::createClient();
+        $client->request('GET', $url);
+
+        $this->assertTrue($client->getResponse()->isSuccessful());
+    }
+
+    public function provideUrls()
+    {
+        return array(
+            array('/'),
+            array('/text/bitcoin-price'),
+            array('/json/bitcoin-price'),
+            array('/my-wallet/list'),
+        );
+    }
 }
