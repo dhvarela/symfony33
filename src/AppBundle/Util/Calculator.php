@@ -7,4 +7,9 @@ class Calculator
     {
         return $a + $b;
     }
+
+    public function subs($a, $b)
+    {
+        return $a - $b;
+    }
 }
